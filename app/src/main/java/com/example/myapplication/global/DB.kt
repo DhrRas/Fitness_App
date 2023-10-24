@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper
 
 
     override fun onCreate(db: SQLiteDatabase) {
-        onCreate(db)
+       db.execSQL(SqlTable.admin)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
