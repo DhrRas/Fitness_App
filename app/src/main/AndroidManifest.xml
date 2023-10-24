@@ -20,7 +20,8 @@
         android:theme="@style/Theme.MyApplication">
 
         <activity
-            android:name=".activity.LoginActivity" />
+            android:name=".activity.LoginActivity"
+            android:theme="@style/Theme.MyApplication"/>
 
         <activity
             android:name=".SplashScreenActivity"
