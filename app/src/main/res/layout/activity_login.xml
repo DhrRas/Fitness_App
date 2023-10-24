@@ -6,11 +6,85 @@
     android:layout_height="match_parent"
     tools:context=".activity.LoginActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
+   <ImageView
+       android:layout_width="100dp"
+       android:layout_height="100dp"
+       android:src="@drawable/gym_logo"
+       android:layout_alignParentTop="true"
+       android:layout_centerInParent="true"
+       android:layout_marginTop="10dp"
+       android:id="@+id/imgGymLogo"
+       tools:ignore="ContentDescription" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Welcome to Login page"
-        android:layout_centerInParent="true"
-        tools:ignore="MissingConstraints" />
+        android:orientation="vertical"
+        android:layout_below="@+id/imgGymLogo"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp" >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/log_in"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textStyle="bold" />
+
+    <!--    <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" > -->
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:hint="Enter User Name"
+            android:layout_marginTop="15dp"
+            android:id="@+id/edtUserName"
+            tools:ignore="Autofill, HardcodedText, TextFields" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:hint="Enter Password"
+                android:id="@+id/edtPassword"
+                android:inputType="numberPassword"
+                android:layout_marginTop="15dp"
+                tools:ignore="Autofill, HardcodedText, TextFields" />
+
+            <Button
+                android:id="@+id/btnLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="20dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="Log In"
+                android:textAllCaps="false"
+                android:textSize="15sp"
+                android:background="@color/purple_500"
+                android:textColor="@color/white"
+                tools:ignore="HardcodedText" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Forgot Password?"
+            android:textSize="15sp"
+            android:layout_gravity="center"
+            android:textColor="@color/red"
+            android:id="@+id/txtForgotPassword"
+            tools:ignore="HardcodedText"/>
+
+      <!--  </com.google.android.material.card.MaterialCardView>  -->
+
+    </LinearLayout>
 
 </RelativeLayout>
