@@ -13,7 +13,7 @@ import android.database.sqlite.SQLiteOpenHelper
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        onCreate(db)
+
     }
      // to run the query.
      fun executeQuery(sql:String):Boolean {

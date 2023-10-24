@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import com.example.myapplication.activity.HomeActivity
 import com.example.myapplication.activity.LoginActivity
 import com.example.myapplication.databinding.ActivityMainBinding
 import com.example.myapplication.global.DB
@@ -26,15 +27,20 @@ class SplashScreenActivity : AppCompatActivity() {
         session = SessionManager(this)
 
         insertAdminData()
-
         mDelayHandler = Handler()
         mDelayHandler?.postDelayed(mRunnable, splash_delay)
     }
 
     private val mRunnable: Runnable = Runnable {
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
-        finish()
+        if (session?.isLoggedIn == true) {
+            val intent = Intent(this, HomeActivity::class.java)
+            startActivity(intent)
+            finish()
+        } else {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 
     private fun insertAdminData() {

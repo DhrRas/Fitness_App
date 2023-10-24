@@ -8,7 +8,8 @@
         android:required="false" />
 
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopeStorage" />
 
     <application
@@ -18,15 +19,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
-
+        <activity
+            android:name=".activity.HomeActivity"
+            android:exported="false" />
         <activity
             android:name=".activity.LoginActivity"
-            android:theme="@style/Theme.MyApplication"/>
-
+            android:theme="@style/Theme.MyApplication" />
         <activity
             android:name=".SplashScreenActivity"
             android:exported="true">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

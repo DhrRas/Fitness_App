@@ -11,15 +11,13 @@ class SessionManager (private var context:Context){
 
     // shared pref mode
     internal var PRIVATE_MODE = 0
-    val isLogged:Boolean
+    val isLoggedIn:Boolean
         get() = pref.getBoolean(KEY_IS_LOGED_IN,false)
 
-    fun setLogin(isLoggedIn:Boolean){
-        editor.putBoolean(KEY_IS_LOGED_IN,isLoggedIn)
+    fun setLogin(isLoggedIn: Boolean){
+        editor.putBoolean(KEY_IS_LOGED_IN, isLoggedIn)
         // commit changes
         editor.commit()
-
-
         Log.d(TAG, "user Login Session modified!")
     }
 
