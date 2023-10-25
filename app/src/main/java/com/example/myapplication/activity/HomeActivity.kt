@@ -1,5 +1,6 @@
 package com.example.myapplication.activity
 
+import android.content.Intent
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,8 +11,15 @@ import android.window.OnBackInvokedDispatcher
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.example.myapplication.R
 import com.example.myapplication.databinding.ActivityHomeBinding
+import com.example.myapplication.fragment.FragmentAddMember
+import com.example.myapplication.fragment.FragmentAddUpdateFee
+import com.example.myapplication.fragment.FragmentAllMember
+import com.example.myapplication.fragment.FragmentChangePassword
+import com.example.myapplication.fragment.FragmentFeePending
 import com.example.myapplication.global.DB
 import com.example.myapplication.manager.SessionManager
 import com.google.android.material.navigation.NavigationView.OnNavigationItemSelectedListener
@@ -47,6 +55,9 @@ class HomeActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
         drawer.addDrawerListener(toggle)
         toggle.syncState()
 
+        val fragment = FragmentAllMember()
+        loadFragment(fragment)
+
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
@@ -70,15 +81,16 @@ class HomeActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_home -> {
-                Toast.makeText(this, "Home", Toast.LENGTH_LONG).show()
-
+                val fragment = FragmentAllMember()
+                loadFragment(fragment)
                 if (drawer.isDrawerOpen(GravityCompat.START)) {
                     drawer.closeDrawer(GravityCompat.START)
                 }
             }
 
             R.id.nav_add -> {
-                Toast.makeText(this, "Add", Toast.LENGTH_LONG).show()
+                val fragment = FragmentAddMember()
+                loadFragment(fragment)
 
                 if (drawer.isDrawerOpen(GravityCompat.START)) {
                     drawer.closeDrawer(GravityCompat.START)
@@ -86,7 +98,8 @@ class HomeActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
             }
 
             R.id.nav_nav_fee_pending -> {
-                Toast.makeText(this, "Pending", Toast.LENGTH_LONG).show()
+                val fragment = FragmentFeePending()
+                loadFragment(fragment)
 
                 if (drawer.isDrawerOpen(GravityCompat.START)) {
                     drawer.closeDrawer(GravityCompat.START)
@@ -94,7 +107,8 @@ class HomeActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
             }
 
             R.id.nav_update_fee -> {
-                Toast.makeText(this, "update fee", Toast.LENGTH_LONG).show()
+                val fragment = FragmentAddUpdateFee()
+                loadFragment(fragment)
 
                 if (drawer.isDrawerOpen(GravityCompat.START)) {
                     drawer.closeDrawer(GravityCompat.START)
@@ -102,7 +116,8 @@ class HomeActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
             }
 
             R.id.nav_change_password -> {
-                Toast.makeText(this, "change password", Toast.LENGTH_LONG).show()
+                val fragment = FragmentChangePassword()
+                loadFragment(fragment)
 
                 if (drawer.isDrawerOpen(GravityCompat.START)) {
                     drawer.closeDrawer(GravityCompat.START)
@@ -110,7 +125,7 @@ class HomeActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
             }
 
             R.id.nav_log_out -> {
-                Toast.makeText(this, "log out", Toast.LENGTH_LONG).show()
+                logOut()
 
                 if (drawer.isDrawerOpen(GravityCompat.START)) {
                     drawer.closeDrawer(GravityCompat.START)
@@ -121,12 +136,25 @@ class HomeActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
         return true
     }
 
+    private fun logOut() {
+        session?.setLogin(false)
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
     override fun onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START)
         } else {
             super.onBackPressed()
         }
+    }
+
+    private fun loadFragment(fragment: Fragment) {
+        var fragmentManager: FragmentManager? = null
+        fragmentManager = supportFragmentManager
+        fragmentManager.beginTransaction().replace(R.id.frame_container, fragment, "Home").commit()
     }
 }
 
