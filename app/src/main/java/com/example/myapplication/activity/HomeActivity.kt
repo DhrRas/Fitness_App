@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import android.window.OnBackInvokedDispatcher
@@ -14,6 +15,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.example.myapplication.R
+import com.example.myapplication.R.id.logOutMenu
 import com.example.myapplication.databinding.ActivityHomeBinding
 import com.example.myapplication.fragment.FragmentAddMember
 import com.example.myapplication.fragment.FragmentAddUpdateFee
@@ -73,6 +75,9 @@ class HomeActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (toggle.onOptionsItemSelected(item)) {
             return true
+        }
+        if (item.itemId == logOutMenu) {
+            logOut()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -156,6 +161,18 @@ class HomeActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
         fragmentManager = supportFragmentManager
         fragmentManager.beginTransaction().replace(R.id.frame_container, fragment, "Home").commit()
     }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        try {
+            val inflater = menuInflater
+            inflater.inflate(R.menu.menu_main, menu)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return super.onCreateOptionsMenu(menu)
+    }
+
 }
 
 
