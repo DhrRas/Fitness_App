@@ -8,4 +8,7 @@
     <string name="add_update_fee">Add/Update Fee</string>
     <string name="change_password_mobile">Change Password/Mobile</string>
     <string name="log_out">Log Out</string>
+
+    <string name="navigation_drawer_open">Open</string>
+    <string name="navigation_drawer_close">Close</string>
 </resources>
