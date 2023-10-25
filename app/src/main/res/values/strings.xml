@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">My Application</string>
     <string name="log_in" />
+    <string name="fee_pending">\n\n</string>
+    <string name="setting" />
+    <string name="add_member" />
+    <string name="home" />
+    <string name="add_update_fee">\t\t\t\t\t\t\t\t\t\t\t\t</string>
+    <string name="change_password_mobile" />
+    <string name="log_out" />
 </resources>
