@@ -15,7 +15,6 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.example.myapplication.R
-import com.example.myapplication.R.id.logOutMenu
 import com.example.myapplication.databinding.ActivityHomeBinding
 import com.example.myapplication.fragment.FragmentAddMember
 import com.example.myapplication.fragment.FragmentAddUpdateFee
@@ -76,7 +75,7 @@ class HomeActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
         if (toggle.onOptionsItemSelected(item)) {
             return true
         }
-        if (item.itemId == logOutMenu) {
+        if (item.itemId == R.id.logOutMenu) {
             logOut()
         }
         return super.onOptionsItemSelected(item)
