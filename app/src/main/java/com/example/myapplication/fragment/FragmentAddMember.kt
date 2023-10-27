@@ -10,18 +10,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
-import com.example.myapplication.R
 import com.example.myapplication.databinding.FragmentAddMemberBinding
 import com.example.myapplication.global.DB
 import com.example.myapplication.global.MyFunction
+import com.github.florent37.runtimepermission.RuntimePermission
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-import android.widget.AdapterView as AdapterView1
 
 
 class FragmentAddMember : Fragment() {
@@ -154,7 +152,7 @@ class FragmentAddMember : Fragment() {
         }
 
         binding.imgTakeImage.setOnClickListener {
-
+            getImage()
         }
         getFee()
     }
@@ -268,5 +266,64 @@ class FragmentAddMember : Fragment() {
 
     fun showToast(value: String) {
         Toast.makeText(activity, value, Toast.LENGTH_LONG).show()
+    }
+
+    private fun getImage() {
+        val items: Array<CharSequence>
+        try {
+
+            items = arrayOf("Take Photo", "Choose Image", "Cancel")
+            val builder = android.app.AlertDialog.Builder(activity)
+            builder.setCancelable(false)
+            builder.setTitle("Select Image")
+            builder.setItems(items) { dialogInterface, i ->
+                if (items[i] == "Take Photo") {
+                    RuntimePermission.askPermission(this)
+                        .request(android.Manifest.permission.CAMERA)
+                        .onAccepted {
+
+                        }
+                        .onDenied {
+                            android.app.AlertDialog.Builder(activity)
+                                .setMessage("Please accept our permission to capture image")
+                                .setPositiveButton("Yes") { dialogInterface, i ->
+                                    it.askAgain()
+                                }
+
+                                .setNegativeButton("No") { dialogInterface, i ->
+                                    dialogInterface.dismiss()
+                                }
+                                .show()
+                        }.ask()
+
+                } else if (items[i] == "Choose Image") {
+                    RuntimePermission.askPermission(this)
+                        .request(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        .onAccepted {
+
+                        }
+                        .onDenied {
+                            android.app.AlertDialog.Builder(activity)
+                                .setMessage("Please accept our permission to capture image")
+                                .setPositiveButton("Yes") { dialogInterface, i ->
+                                    it.askAgain()
+                                }
+
+                                .setNegativeButton("No") { dialogInterface, i ->
+                                    dialogInterface.dismiss()
+                                }
+                                .show()
+                        }.ask()
+
+                } else {
+                    dialogInterface.dismiss()
+                }
+            }
+            builder.show()
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+
+        }
     }
 }
