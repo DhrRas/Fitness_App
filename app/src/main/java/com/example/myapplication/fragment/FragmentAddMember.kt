@@ -3,6 +3,8 @@ package com.example.myapplication.fragment
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,10 +12,12 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.EditText
+import android.widget.Spinner
 import android.widget.Toast
 import com.example.myapplication.R
 import com.example.myapplication.databinding.FragmentAddMemberBinding
 import com.example.myapplication.global.DB
+import com.example.myapplication.global.MyFunction
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -22,6 +26,11 @@ import android.widget.AdapterView as AdapterView1
 
 class FragmentAddMember : Fragment() {
     var db: DB? = null
+    var oneMonth: String? = ""
+    var threeMonths: String? = ""
+    var sixMonths: String? = ""
+    var oneYear: String? = ""
+    var threeYear: String? = ""
 
     private lateinit var binding: FragmentAddMemberBinding
     override fun onCreateView(
@@ -47,43 +56,91 @@ class FragmentAddMember : Fragment() {
                 val myFormat = "dd/MM/yyyy"
                 val sdf = SimpleDateFormat(myFormat, Locale.US)
                 binding.edtJoining.setText(sdf.format(cal.time))
+            }
 
-                binding.spMemberShip.onItemSelectedListener =
-                    object : AdapterView.OnItemSelectedListener {
-                        override fun onItemSelected(
-                            p0: AdapterView<*>?,
-                            p1: View?,
-                            p2: Int,
-                            p3: Long
-                        ) {
-                            val value = binding.spMemberShip.selectedItem.toString().trim()
-                            if (value == "Select") {
-                                binding.edtExpire.setText("")
-                            } else {
-                                if (binding.edtJoining.text.toString().trim().isNotEmpty()) {
-                                    if (value == "1 Month") {
-                                        calculateExpireDate(1, binding.edtExpire)
-                                    } else if (value == "3 Months") {
-                                        calculateExpireDate(3, binding.edtExpire)
-                                    } else if (value == "6 Months") {
-                                        calculateExpireDate(6, binding.edtExpire)
-                                    } else if (value == "1 Year") {
-                                        calculateExpireDate(12, binding.edtExpire)
-                                    } else if (value == "3 Years") {
-                                        calculateExpireDate(36, binding.edtExpire)
-                                    }
+        binding.spMemberShip.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    p0: AdapterView<*>?,
+                    p1: View?,
+                    p2: Int,
+                    p3: Long
+                ) {
+                    val value = binding.spMemberShip.selectedItem.toString().trim()
+                    if (value == "Select") {
+                        binding.edtExpire.setText("")
+                        calculateTotal(
+                            binding.spMemberShip,
+                            binding.edtDiscount,
+                            binding.edtAmount
+                        )
 
-                                } else {
-                                    showToast("Select Joining date first")
-                                }
-
+                    } else {
+                        if (binding.edtJoining.text.toString().trim().isNotEmpty()) {
+                            if (value == "1 Month") {
+                                calculateExpireDate(1, binding.edtExpire)
+                                calculateTotal(
+                                    binding.spMemberShip,
+                                    binding.edtDiscount,
+                                    binding.edtAmount
+                                )
+                            } else if (value == "3 Months") {
+                                calculateExpireDate(3, binding.edtExpire)
+                                calculateTotal(
+                                    binding.spMemberShip,
+                                    binding.edtDiscount,
+                                    binding.edtAmount
+                                )
+                            } else if (value == "6 Months") {
+                                calculateExpireDate(6, binding.edtExpire)
+                                calculateTotal(
+                                    binding.spMemberShip,
+                                    binding.edtDiscount,
+                                    binding.edtAmount
+                                )
+                            } else if (value == "1 Year") {
+                                calculateExpireDate(12, binding.edtExpire)
+                                calculateTotal(
+                                    binding.spMemberShip,
+                                    binding.edtDiscount,
+                                    binding.edtAmount
+                                )
+                            } else if (value == "3 Years") {
+                                calculateExpireDate(36, binding.edtExpire)
+                                calculateTotal(
+                                    binding.spMemberShip,
+                                    binding.edtDiscount,
+                                    binding.edtAmount
+                                )
                             }
-                        }
 
-                        override fun onNothingSelected(p0: AdapterView<*>?) {
+                        } else {
+                            showToast("Select Joining date first")
+                            binding.spMemberShip.setSelection(0)
                         }
                     }
+                }
+
+                override fun onNothingSelected(p0: AdapterView<*>?) {
+                }
             }
+
+        binding.edtDiscount.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+                if (p0 != null) {
+                    calculateTotal(binding.spMemberShip, binding.edtDiscount, binding.edtAmount)
+                }
+            }
+        })
+
 
         binding.imgPicDate.setOnClickListener {
             activity?.let { it1 ->
@@ -94,6 +151,101 @@ class FragmentAddMember : Fragment() {
                     cal.get(Calendar.DAY_OF_MONTH)
                 ).show()
             }
+        }
+
+        binding.imgTakeImage.setOnClickListener {
+
+        }
+        getFee()
+    }
+
+    private fun getFee() {
+        try {
+            val sqlQuery = "SELECT  * FROM FEE WHERE ID = '1' "
+            db?.fireQuery(sqlQuery)?.use {
+                oneMonth = MyFunction.getValue(it, "ONE_MONTH")
+                threeMonths = MyFunction.getValue(it, "THREE_MONTHs")
+                sixMonths = MyFunction.getValue(it, "SIX_MONTHs")
+                oneYear = MyFunction.getValue(it, "ONE_YEAR")
+                threeYear = MyFunction.getValue(it, "THREE_YEARS")
+            }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun calculateTotal(spMember: Spinner, edtDis: EditText, edtAmt: EditText) {
+        val month = spMember.selectedItem.toString().trim()
+        var discount = edtDis.text.toString().trim()
+        if (edtDis.text.toString().toString().isEmpty()) {
+            discount = "0"
+        }
+        if (month == "Select") {
+            edtAmt.setText("")
+        } else if (month == "1 Month") {
+            if (discount.trim().isEmpty()) {
+                discount = "0"
+            }
+            if (oneMonth!!.trim().isNotEmpty()) {
+                val discountAmount =
+                    ((oneMonth!!.toDouble() * discount.toDouble()) / 100) // finding out the discount amount
+                val total =
+                    oneMonth!!.toDouble() - discountAmount // Minus discount amount from main amount
+                edtAmt.setText(total.toString())
+            }
+
+        } else if (month == "3 Months") {
+            if (discount.trim().isEmpty()) {
+                discount = "0"
+            }
+
+            if (threeMonths!!.trim().isNotEmpty()) {
+                val discountAmount =
+                    ((threeMonths!!.toDouble() * discount.toDouble()) / 100) // finding out the discount amount
+                val total =
+                    threeMonths!!.toDouble() - discountAmount // Minus discount amount from main amount
+                edtAmt.setText(total.toString())
+            }
+        } else if (month == "6 Month") {
+            if (discount.trim().isEmpty()) {
+                discount = "0"
+            }
+
+            if (sixMonths!!.trim().isNotEmpty()) {
+                val discountAmount =
+                    ((sixMonths!!.toDouble() * discount.toDouble()) / 100) // finding out the discount amount
+                val total =
+                    sixMonths!!.toDouble() - discountAmount // Minus discount amount from main amount
+                edtAmt.setText(total.toString())
+            }
+
+        } else if (month == "1 Years") {
+            if (discount.trim().isEmpty()) {
+                discount = "0"
+            }
+
+            if (oneYear!!.trim().isNotEmpty()) {
+                val discountAmount =
+                    ((oneYear!!.toDouble() * discount.toDouble()) / 100) // finding out the discount amount
+                val total =
+                    oneYear!!.toDouble() - discountAmount // Minus discount amount from main amount
+                edtAmt.setText(total.toString())
+            }
+
+        } else if (month == "3 Years") {
+            if (discount.trim().isEmpty()) {
+                discount = "0"
+            }
+
+            if (threeYear!!.trim().isNotEmpty()) {
+                val discountAmount =
+                    ((threeYear!!.toDouble() * discount.toDouble()) / 100) // finding out the discount amount
+                val total =
+                    threeYear!!.toDouble() - discountAmount // Minus discount amount from main amount
+                edtAmt.setText(total.toString())
+            }
+
         }
     }
 
@@ -110,7 +262,9 @@ class FragmentAddMember : Fragment() {
             val sdf = SimpleDateFormat(myFormat, Locale.US)
             edtExpiry.setText(sdf.format(cal.time))
         }
+
     }
+
 
     fun showToast(value: String) {
         Toast.makeText(activity, value, Toast.LENGTH_LONG).show()
