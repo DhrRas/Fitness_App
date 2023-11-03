@@ -1,10 +1,16 @@
 package com.example.myapplication.fragment
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.DatePickerDialog
+import android.content.Intent
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +19,9 @@ import android.widget.AdapterView
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
+import com.bumptech.glide.Glide
 import com.example.myapplication.databinding.FragmentAddMemberBinding
+import com.example.myapplication.global.CaptureImage
 import com.example.myapplication.global.DB
 import com.example.myapplication.global.MyFunction
 import com.github.florent37.runtimepermission.RuntimePermission
@@ -31,6 +39,11 @@ class FragmentAddMember : Fragment() {
     var threeYear: String? = ""
 
     private lateinit var binding: FragmentAddMemberBinding
+    private var captureImage: CaptureImage? = null
+    private val REQUEST_CAMERA = 1234
+    private val REQUEST_GALLERY = 5664
+    private var actualImagePath = ""
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -44,6 +57,8 @@ class FragmentAddMember : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         db = activity?.let { DB(it) }
+        captureImage = CaptureImage(activity)
+
         val cal = Calendar.getInstance()
         val dateSetListener =
             DatePickerDialog.OnDateSetListener { view1, year, monthOfYear, dayOfMonth ->
@@ -281,7 +296,7 @@ class FragmentAddMember : Fragment() {
                     RuntimePermission.askPermission(this)
                         .request(android.Manifest.permission.CAMERA)
                         .onAccepted {
-
+                            takePicture()
                         }
                         .onDenied {
                             android.app.AlertDialog.Builder(activity)
@@ -300,7 +315,7 @@ class FragmentAddMember : Fragment() {
                     RuntimePermission.askPermission(this)
                         .request(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         .onAccepted {
-
+                            takeFromGallery()
                         }
                         .onDenied {
                             android.app.AlertDialog.Builder(activity)
@@ -324,6 +339,56 @@ class FragmentAddMember : Fragment() {
         } catch (e: Exception) {
             e.printStackTrace()
 
+        }
+    }
+
+    private fun takePicture() {
+        val takePicIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        takePicIntent.putExtra(MediaStore.EXTRA_OUTPUT, captureImage?.setImageUri())
+        takePicIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        startActivityForResult(takePicIntent, REQUEST_CAMERA)
+    }
+
+    @Suppress("DEPRECATION")
+    private fun takeFromGallery() {
+        val intent = Intent()
+        intent.type = "image/jpg"
+        intent.action = Intent.ACTION_PICK
+        startActivityForResult(intent, REQUEST_GALLERY)
+    }
+
+    @Suppress("DEPRECATION")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQUEST_CAMERA && resultCode == Activity.RESULT_OK) {
+            captureImage(captureImage?.getRightAngleImage(captureImage?.imagePath).toString())
+        } else if (requestCode == REQUEST_GALLERY && resultCode == Activity.RESULT_OK) {
+            captureImage(
+                captureImage?.getRightAngleImage(
+                    captureImage?.getPath(
+                        data?.data,
+                        context
+                    )
+                ).toString()
+            )
+        }
+    }
+
+    private fun captureImage(path: String) {
+        Log.d("FragmentAdd", "imagePath: $path")
+        getImagePath(captureImage?.decodeFile(path))
+    }
+
+    private fun getImagePath(bitmap: Bitmap?) {
+        val tempUri: Uri? = captureImage?.getImageUri(activity, bitmap)
+        actualImagePath = captureImage?.getRealPathFromURI(tempUri, activity).toString()
+        Log.d("FragmentAdd", "ActualImagePath: $actualImagePath")
+
+        activity?.let {
+            Glide.with(it)
+                .load(actualImagePath)
+                .into(binding.imgPic)
         }
     }
 }
