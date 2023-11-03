@@ -4,9 +4,11 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Intent
+import android.database.DatabaseUtils
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.provider.ContactsContract.Data
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
@@ -20,6 +22,7 @@ import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
 import com.bumptech.glide.Glide
+import com.example.myapplication.R
 import com.example.myapplication.databinding.FragmentAddMemberBinding
 import com.example.myapplication.global.CaptureImage
 import com.example.myapplication.global.DB
@@ -43,6 +46,7 @@ class FragmentAddMember : Fragment() {
     private val REQUEST_CAMERA = 1234
     private val REQUEST_GALLERY = 5664
     private var actualImagePath = ""
+    private var gender = "Male"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -154,6 +158,23 @@ class FragmentAddMember : Fragment() {
             }
         })
 
+        binding.radioGroup.setOnCheckedChangeListener { radioGroup, i ->
+            when (id) {
+                R.id.rdMale -> {
+                    gender = "Male"
+                }
+
+                R.id.rdFemale -> {
+                    gender = "Female"
+                }
+            }
+        }
+
+        binding.btnAddMemberSave.setOnClickListener {
+            if (validate()) {
+                saveData()
+            }
+        }
 
         binding.imgPicDate.setOnClickListener {
             activity?.let { it1 ->
@@ -390,5 +411,70 @@ class FragmentAddMember : Fragment() {
                 .load(actualImagePath)
                 .into(binding.imgPic)
         }
+    }
+
+    private fun validate(): Boolean {
+        if (binding.edtFirstName.text.toString().trim().isEmpty()) {
+            showToast("Enter first name")
+            return false
+        } else if (binding.edtLastName.text.toString().trim().isEmpty()) {
+            showToast("Enter last name")
+            return false
+        } else if (binding.edtAge.text.toString().trim().isEmpty()) {
+            showToast("Enter age")
+            return false
+        } else if (binding.edtMobile.text.toString().trim().isEmpty()) {
+            showToast("Enter mobile number")
+            return false
+        }
+        return true
+    }
+
+    private fun saveData() {
+        try {
+            val sqlQuery = "INSERT OR REPLACE INTO MEMBER(ID, FIRST_NAME, LAST_NAME, GENDER, AGE," +
+                    "WEIGHT, MOBILE, ADDRESS, DATE_OF_JOINING, MEMBERSHIP, EXPIRE_ON, DISCOUNT, TOTAL, IMAGE_PATH, STATUS) VALUES" +
+                    "('" + getIncrementId() + "'," + DatabaseUtils.sqlEscapeString(
+                binding.edtFirstName.text.toString().trim()
+            ) + ", " +
+                    "" + DatabaseUtils.sqlEscapeString(
+                binding.edtLastName.text.toString().trim()
+            ) + ", '" + gender + "'," +
+                    "'" + binding.edtAge.text.toString()
+                .trim() + "', '" + binding.edtWeight.text.toString().trim() + "', " +
+                    "" + binding.edtMobile.text.toString()
+                .trim() + ", " + DatabaseUtils.sqlEscapeString(
+                binding.edtAddress.text.toString().trim()
+            ) + ","
+            "'" + MyFunction.returnSQLDateFormat(
+                binding.edtJoining.text.toString()
+                    .trim()
+            ) + "', '" + binding.spMemberShip.selectedItem.toString().trim() + "', " +
+                    "'" + MyFunction.returnSQLDateFormat(
+                binding.edtExpire.text.toString()
+                    .trim()
+            ) + "', '" + binding.edtDiscount.text.toString().trim() + "'," +
+                    "'" + binding.edtAmount.text.toString()
+                .trim() + "','" + actualImagePath + "', 'A')"
+            db?.executeQuery(sqlQuery)
+            showToast("Data saved successfully.")
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun getIncrementId(): String {
+        var incrementId = ""
+        try {
+            val sqlQuery = "SELECT IFNULL (MAX(ID)+1, '1') AS ID FROM MEMBER"
+            db?.fireQuery(sqlQuery)?.use {
+                if (it.count > 0) {
+                    incrementId = MyFunction.getValue(it, "ID")
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return incrementId
     }
 }
