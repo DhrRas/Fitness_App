@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.R
@@ -112,11 +113,27 @@ class FragmentAllMember : BaseFragment() {
                 adapter = AdapterLoadMember(arrayList)
                 binding.recylerViewMember.layoutManager = LinearLayoutManager(activity)
                 binding.recylerViewMember.adapter = adapter
+
+                adapter?.onClick {
+                    loadFragment(it)
+
+                }
+
             } else {
                 binding.recylerViewMember.visibility = View.VISIBLE
                 binding.txtAllMemberNDF.visibility = View.GONE
             }
             CloseDialog()
         })
+    }
+
+    private fun loadFragment(id: String) {
+        val fragment = FragmentAddMember()
+        val args = Bundle()
+        args.putString("ID", id)
+        fragment.arguments = args
+        val fragmentManager: FragmentManager? = fragmentManager
+        fragmentManager!!.beginTransaction().replace(R.id.frame_container, fragment, "FragmentAdd")
+            .commit()
     }
 }

@@ -47,6 +47,7 @@ class FragmentAddMember : Fragment() {
     private val REQUEST_GALLERY = 5664
     private var actualImagePath = ""
     private var gender = "Male"
+    private var ID = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,10 +59,13 @@ class FragmentAddMember : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("UseRequireInsteadOfGet")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         db = activity?.let { DB(it) }
         captureImage = CaptureImage(activity)
+
+        ID = arguments!!.getString("ID").toString()
 
         val cal = Calendar.getInstance()
         val dateSetListener =
@@ -158,7 +162,7 @@ class FragmentAddMember : Fragment() {
             }
         })
 
-        binding.radioGroup.setOnCheckedChangeListener { radioGroup, i ->
+        binding.radioGroup.setOnCheckedChangeListener { radioGroup, id ->
             when (id) {
                 R.id.rdMale -> {
                     gender = "Male"
@@ -191,6 +195,10 @@ class FragmentAddMember : Fragment() {
             getImage()
         }
         getFee()
+
+        if (ID.trim().isNotEmpty()) {
+            loadData()
+        }
     }
 
     private fun getFee() {
@@ -470,7 +478,7 @@ class FragmentAddMember : Fragment() {
     private fun getIncrementId(): String {
         var incrementId = ""
         try {
-            val sqlQuery = "SELECT IFNULL (MAX(ID)+1, '1') AS ID FROM MEMBER"
+            val sqlQuery = "SELECT ISNULL (MAX(ID)+1, '1') AS ID FROM MEMBER"
             db?.fireQuery(sqlQuery)?.use {
                 if (it.count > 0) {
                     incrementId = MyFunction.getValue(it, "ID")
@@ -496,4 +504,92 @@ class FragmentAddMember : Fragment() {
             .load(R.drawable.boy)
             .into(binding.imgPic)
     }
+
+    private fun loadData() {
+        try {
+            val sqlQuery = "SELECT * FROM MEMBER WHERE ID = '$ID'"
+            db?.fireQuery(sqlQuery)?.use {
+                if (it.count > 0) {
+                    val firstName = MyFunction.getValue(it, "FIRST_NAME")
+                    val lastName = MyFunction.getValue(it, "LAST_NAME")
+                    val age = MyFunction.getValue(it, "AGE")
+                    val gender = MyFunction.getValue(it, "GENDER")
+                    val weight = MyFunction.getValue(it, "WEIGHT")
+                    val mobileNo = MyFunction.getValue(it, "MOBILE")
+                    val address = MyFunction.getValue(it, "ADDRESS")
+                    val dateofJoin = MyFunction.getValue(it, "DATE_OF_JOINING")
+                    val membership = MyFunction.getValue(it, "MEMBERSHIP")
+                    val expiry = MyFunction.getValue(it, "EXPIRY_ON")
+                    val discount = MyFunction.getValue(it, "DISCOUNT")
+                    val total = MyFunction.getValue(it, "TOTAL")
+                    actualImagePath = MyFunction.getValue(it, "IMAGE_PATH")
+
+                    binding.edtFirstName.setText(firstName)
+                    binding.edtLastName.setText(lastName)
+                    binding.edtAge.setText(age)
+                    binding.edtWeight.setText(weight)
+                    binding.edtMobile.setText(mobileNo)
+                    binding.edtAddress.setText(address)
+                    binding.edtJoining.setText(MyFunction.returnUserDateFormat(dateofJoin))
+                    binding.edtFirstName.setText(firstName)
+                    binding.edtFirstName.setText(firstName)
+
+                    if (actualImagePath.isNotEmpty()) {
+                        Glide.with(this)
+                            .load(actualImagePath)
+                            .into(binding.imgPic)
+
+                    } else {
+                        if (gender == "Male") {
+                            Glide.with(this)
+                                .load(R.drawable.boy)
+                                .into(binding.imgPic)
+                        } else {
+                            Glide.with(this)
+                                .load(R.drawable.girl)
+                                .into(binding.imgPic)
+                        }
+                    }
+                    if (membership.trim().isNotEmpty()) {
+                        when (membership) {
+                            "1 Month" -> {
+                                binding.spMemberShip.setSelection(1)
+                            }
+
+                            "3 Months" -> {
+                                binding.spMemberShip.setSelection(2)
+                            }
+
+                            " 6 Months" -> {
+                                binding.spMemberShip.setSelection(3)
+                            }
+
+                            " 1 Year" -> {
+                                binding.spMemberShip.setSelection(4)
+                            }
+
+                            "3 Years" -> {
+                                binding.spMemberShip.setSelection(5)
+                            }
+
+                            else -> {
+                                binding.spMemberShip.setSelection(0)
+                            }
+                        }
+                    }
+                    if (gender == "Male") {
+                        binding.radioGroup.check(R.id.rdMale)
+                    } else {
+                        binding.radioGroup.check(R.id.rdFemale)
+                    }
+                    binding.edtExpire.setText(MyFunction.returnUserDateFormat(expiry))
+                    binding.edtAmount.setText(total)
+                    binding.edtDiscount.setText(discount)
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 }
+

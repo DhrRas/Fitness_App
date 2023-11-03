@@ -93,8 +93,7 @@ class HomeActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
             }
 
             R.id.nav_add -> {
-                val fragment = FragmentAddMember()
-                loadFragment(fragment)
+                loadFragment()
 
                 if (drawer.isDrawerOpen(GravityCompat.START)) {
                     drawer.closeDrawer(GravityCompat.START)
@@ -159,6 +158,16 @@ class HomeActivity : AppCompatActivity(), OnNavigationItemSelectedListener {
         var fragmentManager: FragmentManager? = null
         fragmentManager = supportFragmentManager
         fragmentManager.beginTransaction().replace(R.id.frame_container, fragment, "Home").commit()
+    }
+
+    private fun loadFragment() {
+        val fragment = FragmentAddMember()
+        val args = Bundle()
+        args.putString("ID", "")
+        fragment.arguments = args
+        val fragmentManager: FragmentManager = supportFragmentManager
+        fragmentManager.beginTransaction().replace(R.id.frame_container, fragment, "FragmentAdd")
+            .commit()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
