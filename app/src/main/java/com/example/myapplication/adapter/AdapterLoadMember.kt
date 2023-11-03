@@ -5,8 +5,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.R
+import com.example.myapplication.model.AllMember
 
-class AdapterLoadMember() : RecyclerView.Adapter<AdapterLoadMember.MyViewHolder>() {
+class AdapterLoadMember(val arrayList: ArrayList<AllMember>) :
+    RecyclerView.Adapter<AdapterLoadMember.MyViewHolder>() {
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     }

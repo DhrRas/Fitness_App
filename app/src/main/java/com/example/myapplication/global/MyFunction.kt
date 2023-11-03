@@ -37,5 +37,20 @@ class MyFunction {
             }
             return ""
         }
+
+        @SuppressLint("SimpleDateFormat")
+        fun returnUserDateFormat(date: String): String {
+            try {
+                if (date.trim().isNotEmpty()) {
+                    val dateFormat1 = SimpleDateFormat("yyyy-MM-dd")
+                    val firstDate = dateFormat1.parse(date)
+                    val dateFormat2 = SimpleDateFormat("dd/MM-dd")
+                    return dateFormat2.format(firstDate)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            return ""
+        }
     }
 }
