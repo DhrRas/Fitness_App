@@ -197,11 +197,13 @@ class FragmentAddMember : Fragment() {
         try {
             val sqlQuery = "SELECT  * FROM FEE WHERE ID = '1' "
             db?.fireQuery(sqlQuery)?.use {
-                oneMonth = MyFunction.getValue(it, "ONE_MONTH")
-                threeMonths = MyFunction.getValue(it, "THREE_MONTHs")
-                sixMonths = MyFunction.getValue(it, "SIX_MONTHs")
-                oneYear = MyFunction.getValue(it, "ONE_YEAR")
-                threeYear = MyFunction.getValue(it, "THREE_YEARS")
+                if (it.count > 0) {
+                    oneMonth = MyFunction.getValue(it, "ONE_MONTH")
+                    threeMonths = MyFunction.getValue(it, "THREE_MONTHs")
+                    sixMonths = MyFunction.getValue(it, "SIX_MONTHs")
+                    oneYear = MyFunction.getValue(it, "ONE_YEAR")
+                    threeYear = MyFunction.getValue(it, "THREE_YEARS")
+                }
             }
 
         } catch (e: Exception) {
