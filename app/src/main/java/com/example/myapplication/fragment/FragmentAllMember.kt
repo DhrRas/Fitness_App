@@ -7,9 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.myapplication.R
 import com.example.myapplication.databinding.FragmentAllMemberBinding
+import com.example.myapplication.global.DB
 
 
-class FragmentAllMember : Fragment() {
+class FragmentAllMember : BaseFragment() {
+    private val TAG = "FragmentAllMember"
+    var db: DB? = null
 
     private lateinit var binding: FragmentAllMemberBinding
     override fun onCreateView(
@@ -19,5 +22,10 @@ class FragmentAllMember : Fragment() {
     ): View? {
         binding = FragmentAllMemberBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        db = activity?.let { DB(it) }
     }
 }
