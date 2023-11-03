@@ -1,6 +1,8 @@
 package com.example.myapplication.fragment
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +20,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Locale
 
 
 class FragmentAllMember : BaseFragment() {
@@ -56,6 +59,20 @@ class FragmentAllMember : BaseFragment() {
         binding.imgAddMember.setOnClickListener {
             loadFragment("")
         }
+        binding.edtAllMemberSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+                myFilter(p0.toString())
+            }
+
+        })
     }
 
 
@@ -113,11 +130,11 @@ class FragmentAllMember : BaseFragment() {
             }
         }, onPostExecute = {
             if (arrayList.size > 0) {
-                binding.recylerViewMember.visibility = View.VISIBLE
+                binding.recyclerViewMember.visibility = View.VISIBLE
                 binding.txtAllMemberNDF.visibility = View.GONE
                 adapter = AdapterLoadMember(arrayList)
-                binding.recylerViewMember.layoutManager = LinearLayoutManager(activity)
-                binding.recylerViewMember.adapter = adapter
+                binding.recyclerViewMember.layoutManager = LinearLayoutManager(activity)
+                binding.recyclerViewMember.adapter = adapter
 
                 adapter?.onClick {
                     loadFragment(it)
@@ -125,7 +142,7 @@ class FragmentAllMember : BaseFragment() {
                 }
 
             } else {
-                binding.recylerViewMember.visibility = View.VISIBLE
+                binding.recyclerViewMember.visibility = View.VISIBLE
                 binding.txtAllMemberNDF.visibility = View.GONE
             }
             CloseDialog()
@@ -140,5 +157,21 @@ class FragmentAllMember : BaseFragment() {
         val fragmentManager: FragmentManager? = fragmentManager
         fragmentManager!!.beginTransaction().replace(R.id.frame_container, fragment, "FragmentAdd")
             .commit()
+    }
+
+    private fun myFilter(searchValue: String) {
+        val temp: ArrayList<AllMember> = ArrayList()
+        if (arrayList.size > 0) {
+            for (list in arrayList) {
+                if (list.firstName.toLowerCase(Locale.ROOT)
+                        .contains(searchValue.toLowerCase(Locale.ROOT)) ||
+                    list.firstName.toLowerCase(Locale.ROOT)
+                        .contains(searchValue.toLowerCase(Locale.ROOT))
+                ) {
+                    temp.add(list)
+                }
+            }
+        }
+        adapter?.updateList(temp)
     }
 }

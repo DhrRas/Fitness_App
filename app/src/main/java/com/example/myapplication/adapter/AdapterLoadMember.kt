@@ -10,7 +10,7 @@ import com.example.myapplication.R
 import com.example.myapplication.databinding.AllMemberListResBinding
 import com.example.myapplication.model.AllMember
 
-class AdapterLoadMember(val arrayList: ArrayList<AllMember>) :
+class AdapterLoadMember(var arrayList: ArrayList<AllMember>) :
     RecyclerView.Adapter<AdapterLoadMember.MyViewHolder>() {
     private var onClick: ((String) -> Unit)? = null
     fun onClick(onClick: ((String) -> Unit)) {
@@ -54,11 +54,20 @@ class AdapterLoadMember(val arrayList: ArrayList<AllMember>) :
                             .into(binding.imgAdapterPic)
                     }
                 }
+                binding.layoutMemberList.setOnClickListener {
+                    onClick?.invoke(this.id)
+                }
             }
         }
     }
 
     override fun getItemCount(): Int {
-        TODO("Not yet implemented")
+        return arrayList.size
     }
+
+    fun updateList(list: ArrayList<AllMember>) {
+        arrayList = list
+        notifyDataSetChanged()
+    }
+
 }
