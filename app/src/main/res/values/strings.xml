@@ -20,6 +20,7 @@
     <string name="_1_year">1 Year:</string>
     <string name="_3_year">3 Years:</string>
     <string name="submit">submit</string>
+    <string name="active">Active</string>
 
     <string-array name="membership">
         <item>Select</item>

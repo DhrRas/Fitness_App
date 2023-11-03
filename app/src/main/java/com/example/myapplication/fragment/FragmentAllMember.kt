@@ -40,17 +40,21 @@ class FragmentAllMember : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         db = activity?.let { DB(it) }
 
-        binding.rdGroupMember.setOnCheckedChangeListener { radioGroup, i ->
+        binding.rdGroupMember.setOnCheckedChangeListener { radioGroup, id ->
             when (id) {
                 R.id.rdActiveMember -> {
-
+                    loadData("A")
                 }
 
                 R.id.rdInActiveMember -> {
-
+                    loadData("D")
                 }
             }
 
+        }
+
+        binding.imgAddMember.setOnClickListener {
+            loadFragment("")
         }
     }
 
@@ -76,6 +80,7 @@ class FragmentAllMember : BaseFragment() {
         lifecycleScope.executeAsyncTask(onPreExecute = {
             showDialog("Processing....")
         }, doInBackground = {
+            arrayList.clear()
             val sqlQuery = "SELECT * FROM MEMBER WHERE STATUS = '$memberStatus'"
             db?.fireQuery(sqlQuery)?.use {
                 if (it.count > 0) {

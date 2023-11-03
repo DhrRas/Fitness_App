@@ -189,16 +189,58 @@ class FragmentAddMember : Fragment() {
                     cal.get(Calendar.DAY_OF_MONTH)
                 ).show()
             }
+
         }
 
         binding.imgTakeImage.setOnClickListener {
             getImage()
         }
         getFee()
+        binding.btnActiveInactive.setOnClickListener {
+            try {
+                if (getStatus() == "A") {
+                    val sqlQuery = "UPDATE MEMBER SET STATUS = 'D' WHERE ID='$ID'"
+                    db?.fireQuery(sqlQuery)
+                    showToast("Member is Inactive now")
+                } else {
+                    val sqlQuery = "UPDATE MEMBER SET STATUS = 'A' WHERE ID ='$ID'"
+                    db?.fireQuery(sqlQuery)
+                    showToast("Member is Active now")
+                }
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
 
         if (ID.trim().isNotEmpty()) {
+            if (getStatus() == "A") {
+                binding.btnActiveInactive.text = "Inactive"
+                binding.btnActiveInactive.visibility = View.VISIBLE
+            } else {
+                binding.btnActiveInactive.text = "Active"
+                binding.btnActiveInactive.visibility = View.VISIBLE
+            }
             loadData()
+        } else {
+            binding.btnActiveInactive.visibility = View.GONE
         }
+
+    }
+
+    private fun getStatus(): String {
+        var status = " "
+        try {
+            val sqlQuery = " SELECT STATUS FROM MEMBER WHERE ID = '$ID'"
+            db?.fireQuery(sqlQuery)?.use {
+                if (it.count > 0) {
+                    status = MyFunction.getValue(it, "STATUS")
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return status
     }
 
     private fun getFee() {
@@ -234,9 +276,10 @@ class FragmentAddMember : Fragment() {
             if (oneMonth!!.trim().isNotEmpty()) {
                 val discountAmount =
                     ((oneMonth!!.toDouble() * discount.toDouble()) / 100) // finding out the discount amount
+
                 val total =
                     oneMonth!!.toDouble() - discountAmount // Minus discount amount from main amount
-                edtAmt.setText(total.toString())
+                edtAmt.setText(String.format("%.2f", total))
             }
 
         } else if (month == "3 Months") {
@@ -249,7 +292,7 @@ class FragmentAddMember : Fragment() {
                     ((threeMonths!!.toDouble() * discount.toDouble()) / 100) // finding out the discount amount
                 val total =
                     threeMonths!!.toDouble() - discountAmount // Minus discount amount from main amount
-                edtAmt.setText(total.toString())
+                edtAmt.setText(String.format("%.2f", total))
             }
         } else if (month == "6 Month") {
             if (discount.trim().isEmpty()) {
@@ -261,7 +304,7 @@ class FragmentAddMember : Fragment() {
                     ((sixMonths!!.toDouble() * discount.toDouble()) / 100) // finding out the discount amount
                 val total =
                     sixMonths!!.toDouble() - discountAmount // Minus discount amount from main amount
-                edtAmt.setText(total.toString())
+                edtAmt.setText(String.format("%.2f", total))
             }
 
         } else if (month == "1 Years") {
@@ -274,7 +317,7 @@ class FragmentAddMember : Fragment() {
                     ((oneYear!!.toDouble() * discount.toDouble()) / 100) // finding out the discount amount
                 val total =
                     oneYear!!.toDouble() - discountAmount // Minus discount amount from main amount
-                edtAmt.setText(total.toString())
+                edtAmt.setText(String.format("%.2f", total))
             }
 
         } else if (month == "3 Years") {
@@ -287,7 +330,7 @@ class FragmentAddMember : Fragment() {
                     ((threeYear!!.toDouble() * discount.toDouble()) / 100) // finding out the discount amount
                 val total =
                     threeYear!!.toDouble() - discountAmount // Minus discount amount from main amount
-                edtAmt.setText(total.toString())
+                edtAmt.setText(String.format("%.2f", total))
             }
 
         }
@@ -442,9 +485,15 @@ class FragmentAddMember : Fragment() {
 
     private fun saveData() {
         try {
+            var myIncrementId = ""
+            if (ID.trim().isEmpty()) {
+                myIncrementId = getIncrementId()
+            } else {
+                myIncrementId = ID
+            }
             val sqlQuery = "INSERT OR REPLACE INTO MEMBER(ID, FIRST_NAME, LAST_NAME, GENDER, AGE," +
                     "WEIGHT, MOBILE, ADDRESS, DATE_OF_JOINING, MEMBERSHIP, EXPIRE_ON, DISCOUNT, TOTAL, IMAGE_PATH, STATUS) VALUES" +
-                    "('" + getIncrementId() + "'," + DatabaseUtils.sqlEscapeString(
+                    "('" + myIncrementId + "'," + DatabaseUtils.sqlEscapeString(
                 binding.edtFirstName.text.toString().trim()
             ) + ", " +
                     "" + DatabaseUtils.sqlEscapeString(
@@ -468,7 +517,11 @@ class FragmentAddMember : Fragment() {
                 .trim() + "','" + actualImagePath + "', 'A')"
             db?.executeQuery(sqlQuery)
             showToast("Data saved successfully.")
-            clearData()
+
+            if (ID.trim().isEmpty()) {
+                clearData()
+            }
+
 
         } catch (e: Exception) {
             e.printStackTrace()
