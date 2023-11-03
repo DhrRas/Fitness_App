@@ -460,6 +460,8 @@ class FragmentAddMember : Fragment() {
                 .trim() + "','" + actualImagePath + "', 'A')"
             db?.executeQuery(sqlQuery)
             showToast("Data saved successfully.")
+            clearData()
+
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -478,5 +480,20 @@ class FragmentAddMember : Fragment() {
             e.printStackTrace()
         }
         return incrementId
+    }
+
+    private fun clearData() {
+        binding.edtFirstName.setText("")
+        binding.edtLastName.setText("")
+        binding.edtAge.setText("")
+        binding.edtWeight.setText("")
+        binding.edtMobile.setText("")
+        binding.edtAddress.setText("")
+        binding.edtJoining.setText("")
+        actualImagePath = ""
+
+        Glide.with(this)
+            .load(R.drawable.boy)
+            .into(binding.imgPic)
     }
 }

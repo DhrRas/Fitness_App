@@ -30,7 +30,7 @@ class FragmentAllMember : BaseFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentAllMemberBinding.inflate(inflater, container, false)
         return binding.root
     }
