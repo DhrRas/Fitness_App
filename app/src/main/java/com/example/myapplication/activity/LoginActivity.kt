@@ -1,12 +1,21 @@
 package com.example.myapplication.activity
 
+import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
+import com.example.myapplication.R
+import com.example.myapplication.R.style
 import com.example.myapplication.databinding.ActivityLoginBinding
+import com.example.myapplication.databinding.ForgetPasswordDialogBinding
 import com.example.myapplication.global.DB
+import com.example.myapplication.global.MyFunction
 import com.example.myapplication.manager.SessionManager
 
 class LoginActivity : AppCompatActivity() {
@@ -33,7 +42,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         binding.txtForgotPassword.setOnClickListener {
-
+            showDialog()
         }
     }
 
@@ -68,6 +77,48 @@ class LoginActivity : AppCompatActivity() {
             return false
         }
         return true
+    }
+
+    private fun showDialog() {
+        val binding2 = ForgetPasswordDialogBinding.inflate(LayoutInflater.from(this))
+        val dialog = Dialog(this, style.AlertDialogCustom)
+        dialog.setContentView(binding2.root)
+        dialog.setCancelable(false)
+        dialog.show()
+
+        binding2.btnForgetSubmit.setOnClickListener {
+            if (binding2.edtForgetMobile.text.toString().trim().isNotEmpty()) {
+                checkData(binding2.edtForgetMobile.text.toString().trim(), binding2.txtYourPassword)
+
+            } else {
+                Toast.makeText(this, "Enter Mobile No.", Toast.LENGTH_LONG).show()
+            }
+        }
+
+        binding2.imgBackButton.setOnClickListener {
+            dialog.dismiss()
+        }
+
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun checkData(mobile: String, txtShowPassword: TextView) {
+        try {
+            val sqlQuery = "SELECT * FROM ADMIN WHERE MOBILE = '$mobile'"
+            db?.fireQuery(sqlQuery)?.use {
+                if (it.count > 0) {
+                    val password = MyFunction.getValue(it, "PASSWORD")
+                    txtShowPassword.visibility = View.VISIBLE
+                    txtShowPassword.text = "Your Password is : $ password"
+                } else {
+                    Toast.makeText(this, "Incorrect Mobile Number", Toast.LENGTH_LONG).show()
+                    txtShowPassword.visibility = View.GONE
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
     }
 }
 
