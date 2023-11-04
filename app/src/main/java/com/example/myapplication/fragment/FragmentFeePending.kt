@@ -144,7 +144,7 @@ class FragmentFeePending : BaseFragment() {
             .replace(R.id.frame_container, fragment, "FragmentAdd")
             .commit()
     }
-
+    
     private fun myFilter(searchValue: String) {
         val temp: ArrayList<AllMember> = ArrayList()
         if (arrayList.size > 0) {

@@ -3,6 +3,7 @@ package com.example.myapplication.fragment
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
+import android.app.Dialog
 import android.content.Intent
 import android.database.DatabaseUtils
 import android.graphics.Bitmap
@@ -23,13 +24,16 @@ import android.widget.Spinner
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.example.myapplication.R
+import com.example.myapplication.R.style
 import com.example.myapplication.databinding.FragmentAddMemberBinding
+import com.example.myapplication.databinding.RenewDialogBinding
 import com.example.myapplication.global.CaptureImage
 import com.example.myapplication.global.DB
 import com.example.myapplication.global.MyFunction
 import com.github.florent37.runtimepermission.RuntimePermission
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 
@@ -42,6 +46,7 @@ class FragmentAddMember : Fragment() {
     var threeYear: String? = ""
 
     private lateinit var binding: FragmentAddMemberBinding
+    private lateinit var bindingDialog: RenewDialogBinding
     private var captureImage: CaptureImage? = null
     private val REQUEST_CAMERA = 1234
     private val REQUEST_GALLERY = 5664
@@ -226,6 +231,11 @@ class FragmentAddMember : Fragment() {
             binding.btnActiveInactive.visibility = View.GONE
         }
 
+        binding.btnRenewalSave.setOnClickListener {
+            if (ID.trim().isNotEmpty()) {
+                openRenewalDialog()
+            }
+        }
     }
 
     private fun getStatus(): String {
@@ -638,11 +648,31 @@ class FragmentAddMember : Fragment() {
                     binding.edtExpire.setText(MyFunction.returnUserDateFormat(expiry))
                     binding.edtAmount.setText(total)
                     binding.edtDiscount.setText(discount)
+
+                    val sdf = SimpleDateFormat("yyyy-MM-dd")
+                    val eDate = sdf.parse(expiry)
+                    if (eDate!!.after(Date())) { // if expiry date greater than current date than
+                        binding.btnRenewalSave.visibility = View.GONE
+                    } else {
+                        if (getStatus() == "A") {
+                            binding.btnRenewalSave.visibility = View.VISIBLE
+                        }
+                    }
                 }
             }
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    @SuppressLint("UseRequireInsteadOfGet")
+    private fun openRenewalDialog() {
+        bindingDialog = RenewDialogBinding.inflate(LayoutInflater.from(activity))
+        val dialog = Dialog(activity!!, style.AlertDialogCustom)
+        dialog.setContentView(bindingDialog.root)
+        dialog.setCancelable(false)
+        dialog.show()
+
     }
 }
 

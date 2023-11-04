@@ -333,6 +333,18 @@
                     tools:ignore="ButtonStyle" />
 
                 <Button
+                    android:id="@+id/btnRenewalSave"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="5dp"
+                    android:background="@color/purple_500"
+                    android:text="@string/renewal"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    tools:ignore="ButtonStyle" />
+
+                <Button
                     android:id="@+id/btnActiveInactive"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
@@ -345,7 +357,7 @@
                     tools:ignore="ButtonStyle" />
 
             </LinearLayout>
-            
+
         </androidx.core.widget.NestedScrollView>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

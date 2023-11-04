@@ -23,6 +23,7 @@
     <string name="active">Active</string>
     <string name="search">search</string>
     <string name="no_data_found">no_data_found</string>
+    <string name="renewal">renewal</string>
 
     <string-array name="membership">
         <item>Select</item>
