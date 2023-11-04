@@ -342,6 +342,7 @@
                     android:text="@string/renewal"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
+                    android:visibility="gone"
                     tools:ignore="ButtonStyle" />
 
                 <Button

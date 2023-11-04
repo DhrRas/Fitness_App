@@ -11,13 +11,13 @@
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="32"
-        tools:ignore="ScopeStorage,ScopedStorage" />
+        tools:ignore="ScopeStorage" />
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:icon="@drawable/gym_logo"
+        android:label="Gym Management"
+        android:roundIcon="@drawable/gym_logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
         <activity
