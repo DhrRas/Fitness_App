@@ -41,6 +41,7 @@ class FragmentAllMember : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.title = "Dashboard"
         db = activity?.let { DB(it) }
 
         binding.rdGroupMember.setOnCheckedChangeListener { radioGroup, id ->

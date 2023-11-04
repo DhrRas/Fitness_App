@@ -67,6 +67,7 @@ class FragmentAddMember : Fragment() {
     @SuppressLint("UseRequireInsteadOfGet")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.title = "Add New Member"
         db = activity?.let { DB(it) }
         captureImage = CaptureImage(activity)
 
@@ -84,7 +85,18 @@ class FragmentAddMember : Fragment() {
                 binding.edtJoining.setText(sdf.format(cal.time))
             }
 
-        binding.spMemberShip.onItemSelectedListener =
+        bindingDialog.imgDialogPicDate.setOnClickListener {
+            activity?.let { it1 ->
+                DatePickerDialog(
+                    it1, dateSetListener,
+                    cal.get(Calendar.YEAR),
+                    cal.get(Calendar.MONTH),
+                    cal.get(Calendar.DAY_OF_MONTH)
+                ).show()
+            }
+        }
+
+        bindingDialog.spDialogMemberShip.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
                     p0: AdapterView<*>?,
@@ -92,57 +104,57 @@ class FragmentAddMember : Fragment() {
                     p2: Int,
                     p3: Long
                 ) {
-                    val value = binding.spMemberShip.selectedItem.toString().trim()
+                    val value = bindingDialog.spDialogMemberShip.selectedItem.toString().trim()
                     if (value == "Select") {
-                        binding.edtExpire.setText("")
+                        bindingDialog.edtDialogExpire.setText("")
                         calculateTotal(
-                            binding.spMemberShip,
-                            binding.edtDiscount,
-                            binding.edtAmount
+                            bindingDialog.spDialogMemberShip,
+                            bindingDialog.edtDialogDiscount,
+                            bindingDialog.edtDialogAmount
                         )
 
                     } else {
                         if (binding.edtJoining.text.toString().trim().isNotEmpty()) {
                             if (value == "1 Month") {
-                                calculateExpireDate(1, binding.edtExpire)
+                                calculateExpireDate(1, binding.edtJoining, binding.edtExpire)
                                 calculateTotal(
-                                    binding.spMemberShip,
-                                    binding.edtDiscount,
-                                    binding.edtAmount
+                                    bindingDialog.spDialogMemberShip,
+                                    bindingDialog.edtDialogDiscount,
+                                    bindingDialog.edtDialogAmount
                                 )
                             } else if (value == "3 Months") {
-                                calculateExpireDate(3, binding.edtExpire)
+                                calculateExpireDate(3, binding.edtJoining, binding.edtExpire)
                                 calculateTotal(
-                                    binding.spMemberShip,
-                                    binding.edtDiscount,
-                                    binding.edtAmount
+                                    bindingDialog.spDialogMemberShip,
+                                    bindingDialog.edtDialogDiscount,
+                                    bindingDialog.edtDialogAmount
                                 )
                             } else if (value == "6 Months") {
-                                calculateExpireDate(6, binding.edtExpire)
+                                calculateExpireDate(6, binding.edtJoining, binding.edtExpire)
                                 calculateTotal(
-                                    binding.spMemberShip,
-                                    binding.edtDiscount,
-                                    binding.edtAmount
+                                    bindingDialog.spDialogMemberShip,
+                                    bindingDialog.edtDialogDiscount,
+                                    bindingDialog.edtDialogAmount
                                 )
                             } else if (value == "1 Year") {
-                                calculateExpireDate(12, binding.edtExpire)
+                                calculateExpireDate(12, binding.edtJoining, binding.edtExpire)
                                 calculateTotal(
-                                    binding.spMemberShip,
-                                    binding.edtDiscount,
-                                    binding.edtAmount
+                                    bindingDialog.spDialogMemberShip,
+                                    bindingDialog.edtDialogDiscount,
+                                    bindingDialog.edtDialogAmount
                                 )
                             } else if (value == "3 Years") {
-                                calculateExpireDate(36, binding.edtExpire)
+                                calculateExpireDate(36, binding.edtJoining, binding.edtExpire)
                                 calculateTotal(
-                                    binding.spMemberShip,
-                                    binding.edtDiscount,
-                                    binding.edtAmount
+                                    bindingDialog.spDialogMemberShip,
+                                    bindingDialog.edtDialogDiscount,
+                                    bindingDialog.edtDialogAmount
                                 )
                             }
 
                         } else {
                             showToast("Select Joining date first")
-                            binding.spMemberShip.setSelection(0)
+                            bindingDialog.spDialogMemberShip.setSelection(0)
                         }
                     }
                 }
@@ -347,7 +359,7 @@ class FragmentAddMember : Fragment() {
     }
 
     @SuppressLint("SimpleDateFormat")
-    private fun calculateExpireDate(month: Int, edtExpiry: EditText) {
+    private fun calculateExpireDate(month: Int, edtJoining: EditText, edtExpiry: EditText) {
         val dtStart = binding.edtJoining.text.toString().trim()
         if (dtStart.isNotEmpty()) {
             val format = SimpleDateFormat("dd/MM/yyyy")
@@ -673,6 +685,164 @@ class FragmentAddMember : Fragment() {
         dialog.setCancelable(false)
         dialog.show()
 
+        bindingDialog.edtDialogJoining.setText(binding.edtExpire.text.toString().trim())
+        bindingDialog.imgDialogRenewBack.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        val cal = Calendar.getInstance()
+        val dateSetListener =
+            DatePickerDialog.OnDateSetListener { view1, year, monthOfYear, dayOfMonth ->
+                cal.set(Calendar.YEAR, year)
+                cal.set(Calendar.MONTH, monthOfYear)
+                cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+                val myFormat = "dd/MM/yyyy"
+                val sdf = SimpleDateFormat(myFormat, Locale.US)
+                bindingDialog.edtDialogJoining.setText(sdf.format(cal.time))
+            }
+
+        bindingDialog.imgDialogPicDate.setOnClickListener {
+            activity?.let { it1 ->
+                DatePickerDialog(
+                    it1, dateSetListener,
+                    cal.get(Calendar.YEAR),
+                    cal.get(Calendar.MONTH),
+                    cal.get(Calendar.DAY_OF_MONTH)
+                ).show()
+            }
+
+        }
+
+        bindingDialog.spDialogMemberShip.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    p0: AdapterView<*>?,
+                    p1: View?,
+                    p2: Int,
+                    p3: Long
+                ) {
+                    val value = bindingDialog.spDialogMemberShip.selectedItem.toString().trim()
+                    if (value == "Select") {
+                        bindingDialog.edtDialogExpire.setText("")
+                        calculateTotal(
+                            bindingDialog.spDialogMemberShip,
+                            bindingDialog.edtDialogDiscount,
+                            bindingDialog.edtDialogAmount
+                        )
+
+                    } else {
+                        if (binding.edtJoining.text.toString().trim().isNotEmpty()) {
+                            if (value == "1 Month") {
+                                calculateExpireDate(
+                                    1,
+                                    bindingDialog.edtDialogJoining,
+                                    bindingDialog.edtDialogExpire
+                                )
+                                calculateTotal(
+                                    bindingDialog.spDialogMemberShip,
+                                    bindingDialog.edtDialogDiscount,
+                                    bindingDialog.edtDialogAmount
+                                )
+                            } else if (value == "3 Months") {
+                                calculateExpireDate(
+                                    3, bindingDialog.edtDialogJoining,
+                                    bindingDialog.edtDialogExpire
+                                )
+                                calculateTotal(
+                                    bindingDialog.spDialogMemberShip,
+                                    bindingDialog.edtDialogDiscount,
+                                    bindingDialog.edtDialogAmount
+                                )
+                            } else if (value == "6 Months") {
+                                calculateExpireDate(
+                                    6, bindingDialog.edtDialogJoining,
+                                    bindingDialog.edtDialogExpire
+                                )
+                                calculateTotal(
+                                    bindingDialog.spDialogMemberShip,
+                                    bindingDialog.edtDialogDiscount,
+                                    bindingDialog.edtDialogAmount
+                                )
+                            } else if (value == "1 Year") {
+                                calculateExpireDate(
+                                    12, bindingDialog.edtDialogJoining,
+                                    bindingDialog.edtDialogExpire
+                                )
+                                calculateTotal(
+                                    bindingDialog.spDialogMemberShip,
+                                    bindingDialog.edtDialogDiscount,
+                                    bindingDialog.edtDialogAmount
+                                )
+                            } else if (value == "3 Years") {
+                                calculateExpireDate(
+                                    36, bindingDialog.edtDialogJoining,
+                                    bindingDialog.edtDialogExpire
+                                )
+                                calculateTotal(
+                                    bindingDialog.spDialogMemberShip,
+                                    bindingDialog.edtDialogDiscount,
+                                    bindingDialog.edtDialogAmount
+                                )
+                            }
+
+                        } else {
+                            showToast("Select Joining date first")
+                            bindingDialog.spDialogMemberShip.setSelection(0)
+                        }
+                    }
+                }
+
+                override fun onNothingSelected(p0: AdapterView<*>?) {
+                }
+            }
+
+        bindingDialog.edtDialogDiscount.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun afterTextChanged(p0: Editable?) {
+                if (p0 != null) {
+                    calculateTotal(
+                        bindingDialog.spDialogMemberShip,
+                        bindingDialog.edtDialogDiscount,
+                        bindingDialog.edtDialogAmount
+                    )
+                }
+            }
+
+        })
+        bindingDialog.btnDialogRenewSave.setOnClickListener {
+            if (bindingDialog.spDialogMemberShip.selectedItem.toString().trim() != "Select") {
+                try {
+                    val sqlQuery =
+                        "UPDATE MEMBER SET DATE_OF_JOINING='" + MyFunction.returnSQLDateFormat(
+                            bindingDialog.edtDialogJoining.text.toString().trim()
+                        ) + "'," +
+                                "MEMBERSHIP='" + bindingDialog.spDialogMemberShip.selectedItem.toString()
+                            .trim() + "'," +
+                                "EXPIRE_ON='" + MyFunction.returnSQLDateFormat(
+                            bindingDialog.edtDialogExpire.text.toString().trim() + "'," +
+                                    "DISCOUNT='" + bindingDialog.edtDialogDiscount.text.toString()
+                                .trim() + "'," +
+                                    "TOTAL='" + bindingDialog.edtDialogAmount.text.toString()
+                                .trim() + "' WHERE ID = '" + ID + "'"
+                        )
+                    db?.executeQuery(sqlQuery)
+                    showToast("Members data saved successfully")
+                    dialog.dismiss()
+                    loadData()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            } else {
+                showToast("Select Membership")
+            }
+        }
     }
 }
 
