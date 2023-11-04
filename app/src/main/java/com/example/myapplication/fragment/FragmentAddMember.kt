@@ -732,7 +732,7 @@ class FragmentAddMember : Fragment() {
                         )
 
                     } else {
-                        if (binding.edtJoining.text.toString().trim().isNotEmpty()) {
+                        if (bindingDialog.edtDialogJoining.text.toString().trim().isNotEmpty()) {
                             if (value == "1 Month") {
                                 calculateExpireDate(
                                     1,
